@@ -1,0 +1,407 @@
+R&D_S3
+--------
+ena
+config t
+banner motd +101227509 Unauthorised Access Prohibited R&D Switches+
+enable secret cisco
+line con 0
+password cisco
+login
+logging synchronous
+exit
+hostname R&D_S3
+vlan 180
+name Science-Group
+exit
+vlan 60
+name Engineering-Group
+exit
+vlan 5
+name IT-Group
+exit
+vlan 80
+name MGT
+exit
+vlan 25
+name Security
+exit
+int vlan 80
+ip add 10.4.4.145 255.255.255.128
+no shut
+exit
+ip default-gateway 10.4.4.129
+int range f0/1-2
+sw mode access
+sw access vlan 5
+exit
+int range f0/7-10
+sw mode access
+sw access vlan 60
+exit
+int range f0/11-14
+sw mode access
+sw access vlan 180
+exit
+int g0/2
+sw mode access
+sw access vlan 25
+exit
+int range f0/3-4
+sw mode trunk
+channel-group 1 mode passive
+no shut
+exit
+int range f0/5-6
+sw mode trunk
+channel-group 3 mode passive
+no shut
+exit
+int g0/1
+sw mode trunk
+exit
+username labuser privilege 15 secret cisco 
+ip domain-name MASAproject.com
+line vty 0 15
+login local
+transport input ssh
+exit
+crypto key generate rsa general-keys modulus 1024
+----------------------------------------------------------
+R&D_S1
+----------------
+ena
+config t
+banner motd +101227509 Unauthorised Access Prohibited R&D Switches+
+enable secret cisco
+line con 0
+password cisco
+login
+logging synchronous
+exit
+hostname R&D_S1
+vlan 180
+name Science-Group
+exit
+vlan 60
+name Engineering-Group
+exit
+vlan 5
+name IT-Group
+exit
+vlan 80
+name MGT
+exit
+int vlan 80
+ip add 10.4.4.146 255.255.255.128
+no shut
+exit
+ip default-gateway 10.4.4.129
+int range f0/1-2
+sw mode access
+sw access vlan 5
+exit
+int range f0/7-10
+sw mode access
+sw access vlan 60
+exit
+int range f0/11-14
+sw mode access
+sw access vlan 180
+exit
+int range f0/3-4
+sw mode trunk
+channel-group 1 mode active
+no shut
+exit
+int range f0/5-6
+sw mode trunk
+channel-group 2 mode active
+no shut
+exit
+username labuser privilege 15 secret cisco 
+ip domain-name MASAproject.com
+line vty 0 15
+login local
+transport input ssh
+exit
+crypto key generate rsa general-keys modulus 1024
+-----------------------------------------------------------------------
+R&D_S2
+-----------------
+ena
+config t
+banner motd +101227509 Unauthorised Access Prohibited R&D Switches+
+enable secret cisco
+line con 0
+password cisco
+login
+logging synchronous
+exit
+hostname R&D_S2
+vlan 180
+name Science-Group
+exit
+vlan 60
+name Engineering-Group
+exit
+vlan 5
+name IT-Group
+exit
+vlan 80
+name MGT
+exit
+int vlan 80
+ip add 10.4.4.147 255.255.255.128
+no shut
+exit
+ip default-gateway 10.4.4.129
+int range f0/1-2
+sw mode access
+sw access vlan 5
+exit
+int range f0/7-10
+sw mode access
+sw access vlan 60
+exit
+int range f0/11-14
+sw mode access
+sw access vlan 180
+exit
+int range f0/3-4
+sw mode trunk
+channel-group 3 mode active
+no shut
+exit
+int range f0/5-6
+sw mode trunk
+channel-group 2 mode passive
+no shut
+exit
+username labuser privilege 15 secret cisco 
+ip domain-name MASAproject.com
+line vty 0 15
+login local
+transport input ssh
+exit
+crypto key generate rsa general-keys modulus 1024
+----------------------------------------------------------------------------------------------
+Server_Sw
+-----------
+ena
+config t
+banner motd +101227509 Unauthorised Access Prohibited R&D Switches+
+enable secret cisco
+line con 0
+password cisco
+login
+logging synchronous
+exit
+hostname Server_SW
+vlan 100
+name Web-Server
+exit
+vlan 200
+name Database-Server
+exit
+vlan 300
+name File-Server
+exit
+vlan 400
+name Mail-Server
+exit
+vlan 500
+name Print-Server
+exit
+vlan 80
+name MGT
+exit
+int range f0/1-5
+sw mode access
+sw access vlan 100
+exit
+int range f0/6-10
+sw mode access
+sw access vlan 200
+exit
+int range f0/11-15
+sw mode access
+sw access vlan 300
+exit
+int range f0/16-20
+sw mode access
+sw access vlan 400
+exit
+int range f0/21-24
+sw mode access
+sw access vlan 500
+exit
+int g0/1
+sw mode trunk
+exit
+int vlan 80
+ip add 10.4.4.148 255.255.255.128
+no shut
+exit
+ip default-gateway 10.4.4.129
+username labuser privilege 15 secret cisco 
+ip domain-name MASAproject.com
+line vty 0 15
+login local
+transport input ssh
+exit
+crypto key generate rsa general-keys modulus 1024
+-----------------------------------------------------------
+Router
+--------------
+ena
+config t
+banner motd +101227509 Unauthorised Access Prohibited R&D_Router+
+enable secret cisco
+hostname R&D_Router
+line con 0
+password cisco
+login
+logging synchronous
+exit
+username labuser privilege 15 secret cisco 
+ip domain-name MASAproject.com
+line vty 0 4
+login local
+transport input ssh
+exit
+crypto key generate rsa general-keys modulus 1024
+int f0/0
+no shut
+exit
+int f0/0.5
+description Connection to IT VLAN
+encapsulation dot1Q 5
+ip add 10.4.4.129 255.255.255.128
+exit
+int f0/0.60
+description Connection to Engineering VLAN
+encapsulation dot1Q 60
+ip add 10.4.4.1 255.255.255.128
+exit
+int f0/0.180
+description Connection to Science VLAN
+encapsulation dot1Q 180
+ip add 10.4.0.1 255.255.255.0
+exit
+int f0/1
+no shut
+exit
+int f0/1.100
+description Server Farm VLAN Connection
+encapsulation dot1Q 100
+ip add 10.4.6.1 255.255.255.0
+exit
+int f0/1.200
+description Server Farm VLAN Connection
+encapsulation dot1Q 200
+ip add 10.4.7.1 255.255.255.0
+exit
+int f0/1.300
+description Server Farm VLAN Connection
+encapsulation dot1Q 300
+ip add 10.4.9.1 255.255.255.0
+exit
+int f0/1.400
+description Server Farm VLAN Connection
+encapsulation dot1Q 400
+ip add 10.4.8.1 255.255.255.0
+exit
+int f0/1.500
+description Server Farm VLAN Connection
+encapsulation dot1Q 500
+ip add 10.4.10.1 255.255.255.0
+exit
+int s0/0/0
+description Serial Connection
+ip add 10.4.5.1 255.255.255.0
+exit
+router ospf 1
+router-id 2.2.2.2
+passive-interface f0/0
+passive-interface f0/1
+network 10.4.0.0 0.0.0.255 area 0
+network 10.4.4.0 0.0.0.127 area 0
+network 10.4.4.128 0.0.0.127 area 0
+network 10.4.3.128 0.0.0.127 area 0
+network 10.4.5.0 0.0.0.3 area 0
+network 10.4.5.4 0.0.0.3 area 0
+network 10.4.6.0 0.0.0.255 area 0
+network 10.4.7.0 0.0.0.255 area 0
+network 10.4.8.0 0.0.0.255 area 0
+network 10.4.9.0 0.0.0.255 area 0
+network 10.4.10.0 0.0.0.255 area 0
+exit
+int s0/0/0
+encapsulation frame-relay ietf
+ip ospf network point-to-point
+no keepalive
+no frame-relay inverse-arp
+frame-relay map ip 10.4.5.1 50 ietf broadcast
+no shut
+exit
+int s0/0/1
+encapsulation frame-relay ietf
+ip ospf network point-to-point
+no keepalive
+no frame-relay inverse-arp
+frame-relay map ip 10.4.5.6 51 ietf broadcast
+no shut
+exit
+ip dhcp excluded-address 10.4.4.129 10.4.4.135
+ip dhcp excluded-address 10.4.4.1
+ip dhcp excluded-address 10.4.0.1
+ip dhcp excluded-address 10.4.6.1
+ip dhcp excluded-address 10.4.7.1
+ip dhcp excluded-address 10.4.8.1
+ip dhcp excluded-address 10.4.9.1
+ip dhcp excluded-address 10.4.10.1
+ip dhcp pool R&DSCIENCE
+network 10.4.0.0 255.255.255.0
+default-router 10.4.0.1
+domain-name MASAproject.com
+exit
+ip dhcp pool R&DENGINEERING
+network 10.4.4.0 255.255.255.128
+default-router 10.4.4.1
+domain-name MASAproject.com
+exit
+ip dhcp pool IT
+network 10.4.4.128 255.255.255.128
+default-router 10.4.4.129
+domain-name MASAproject.com
+exit
+ip dhcp pool SECURITY
+network 10.4.3.128 255.255.255.128
+default-router 10.4.3.129
+domain-name MASAproject.com
+exit
+ip dhcp pool WEBSERVER
+network 10.4.6.0 255.255.255.0
+default-router 10.4.6.1
+domain-name MASAproject.com
+exit
+ip dhcp pool DATABASESERVER
+network 10.4.7.0 255.255.255.0
+default-router 10.4.7.1
+domain-name MASAproject.com
+exit
+ip dhcp pool FILESERVER
+network 10.4.9.0 255.255.255.0
+default-router 10.4.9.1
+domain-name MASAproject.com
+exit
+ip dhcp pool MAILSERVER
+network 10.4.8.0 255.255.255.0
+default-router 10.4.8.1
+domain-name MASAproject.com
+exit
+ip dhcp pool PRINTSERVER
+network 10.4.10.0 255.255.255.0
+default-router 10.4.10.1
+domain-name MASAproject.com
+exit
